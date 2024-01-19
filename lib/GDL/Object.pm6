@@ -4,18 +4,20 @@ use Method::Also;
 
 use GLib::Raw::Traits;
 use GDL::Raw::Types;
-use GDK::Raw::Object;
+use GDL::Raw::Object;
+
+use GTK::Container:ver<3.0.1146>;
 
 use GLib::Roles::Implementor;
 use GLib::Roles::Object;
-use GDO::Roles::Signals::Object;
+use GDL::Roles::Signals::Object;
 
 our subset GdlDockObjectAncestry is export of Mu
   where GdlDockObject | GtkContainerAncestry;
 
 class GDL::Object {
   also does GLib::Roles::Object;
-  also does GDO::Roles::Signals::Object;
+  also does GDL::Roles::Signals::Object;
 
   has GdlDockObject $!gdo is implementor;
 
@@ -135,17 +137,17 @@ class GDL::Object {
 
   # Is originally:
   # GdlDockObject *object,  gboolean recursive --> void
-  method detach {
+  multi method Detach {
     self.connect-boolean($!gdo, 'detach');
   }
 
   # Is originally:
   # GdlDockObject *object,  GdlDockObject *requestor,  GdlDockPlacement position,  GValue *other_data --> void
-  method dock {
+  multi method Dock {
     self.connect-dock($!gdo);
   }
 
-  method bind (GObject() $master) {
+  multi method bind (GObject() $master) {
     gdl_dock_object_bind($!gdo, $master);
   }
 
@@ -166,10 +168,10 @@ class GDL::Object {
 
   method dock (
     GdlDockObject() $requestor,
-    Int()           $placement
+    Int()           $placement,
     GValue()        $other_data
   ) {
-    my GdlDockPlacement $p = $position,
+    my GdlDockPlacement $p = $placement;
 
     gdl_dock_object_dock($!gdo, $requestor, $p, $other_data);
   }
