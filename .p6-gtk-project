@@ -1,0 +1,12 @@
+prefix=GDL::
+struct-prefix=Gdl
+modules=GDL::Raw::Types
+backups=backup,bitbucket,google-backup,azure-backup,hut
+hfile-prefix=
+lib=gdl
+include-directory=/usr/src/gdl/gdl
+exec=
+subprefixes=
+idir-avail=True
+extension=.h
+build-exclude=GDL::Raw::Traps
