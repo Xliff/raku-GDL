@@ -78,27 +78,27 @@ class GdlDockPlaceholder is repr<CStruct> is export {
 class GdlDockRequest is repr<CStruct> is export {
 	has GdlDockObject                $!applicant;
 	has GdlDockObject                $!target   ;
-	has GdlDockPlacement             $!position   is rw;
+	has GdlDockPlacement             $!position ;
 	has Cairo::cairo_rectangle_int_t $!rect     ;
 	has GValue                       $!extra    ;
 
 	method applicant is rw {
 		Proxy.new:
-			FETCH -> $                     { $!applicant },
-			STORE -> $, GdlDockObject() \v { $!applicant := v }
+			FETCH => -> $                     { $!applicant },
+			STORE => -> $, GdlDockObject() \v { $!applicant := v }
 	}
 
 	method target is rw {
 		Proxy.new:
-			FETCH -> $                     { $!target },
-			STORE -> $, GdlDockObject() \v { $!target := v }
+			FETCH => -> $                     { $!target },
+			STORE => -> $, GdlDockObject() \v { $!target := v }
 	}
 
 	method position is rw {
 		Proxy.new:
-			FETCH -> $           { $!position },
+			FETCH => -> $           { $!position },
 
-			STORE -> $, Int() $vv {
+			STORE => -> $, Int() $vv {
 				my GdlDockPlacement $v = $vv;
 				$!position = $v
 			}
@@ -106,14 +106,14 @@ class GdlDockRequest is repr<CStruct> is export {
 
 	method rect is rw {
 		Proxy.new:
-			FETCH -> $     { $!rect },
-			STORE -> $, \v { $!rect := v }
+			FETCH => -> $     { $!rect },
+			STORE => -> $, \v { $!rect := v }
 	}
 
 	method extra is rw {
 		Proxy.new:
-			FETCH -> $              { $!extra },
-			STORE -> $, GValue() \v { $!extra := v }
+			FETCH => -> $              { $!extra },
+			STORE => -> $, GValue() \v { $!extra := v }
 	}
 
 }
