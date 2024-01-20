@@ -1,4 +1,4 @@
-prefix=GDL::
+prefix=GDL
 struct-prefix=Gdl
 modules=GDL::Raw::Types
 backups=backup,bitbucket,google-backup,azure-backup,hut
