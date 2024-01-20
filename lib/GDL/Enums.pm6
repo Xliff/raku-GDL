@@ -36,6 +36,21 @@ class GDL::Enums::DockBarStyle {
 
 }
 
+class GDL::Enums::DockPlacement {
+
+  method get_type {
+    state ($n, $t);
+
+    sub gdl_dock_placement_get_type
+      returns GType
+      is      native(gdl)
+    { * }
+
+    unstable_get_type( self.^name, &gdl_dock_placement_get_type, $n, $t );
+  }
+
+}
+
 class GDL::Enums::SwitcherStyle {
 
   method get_type {
