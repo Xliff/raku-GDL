@@ -20,3 +20,18 @@ class GDL::Enums::Behavior {
   }
 
 }
+
+class GDL::Enums::SwitcherStyle {
+
+  method get_type {
+    state ($n, $t);
+
+    sub gdl_switcher_style_get_type
+      returns GType
+      is      native(gdl)
+    { * }
+
+    unstable_get_type( self.^name, &gdl_switcher_style_get_type, $n, $t );
+  }
+
+}
