@@ -20,8 +20,7 @@ class GDL::Item is GDL::Object {
   has GdlDockItem $!gdi is implementor;
 
   submethod BUILD ( :$dock-item ) {
-    self.setGdlDockItem($dock-item)
-      if $dock-item
+    self.setGdlDockItem($dock-item) if $dock-item
   }
 
   method setGdlDockItem (GdlDockItemAncestry $_) {

@@ -4,6 +4,8 @@ use NativeCall;
 
 use GLib::Raw::Definitions;
 
-unit package GDL::Raw::Definitions;
+use GLib::Roles::Pointers;
+
+unit package GDL::Roles::Definitions;
 
 constant gdl is export = 'gdl-3',v5;
