@@ -41,7 +41,7 @@ class GDL::Bar is GTK::Box {
     self.setGtkBox($to-parent);
   }
 
-  method GDL::Raw::Definitions::GdlDockBar
+  method GDL::Raw::Structs::GdlDockBar
     is also<GdlDockBar>
   { $!gdb }
 

@@ -37,7 +37,7 @@ class GDL::Grip is GTK::Container {
     self.setGtkContainer($to-parent);
   }
 
-  method GDL::Raw::Definitions::GdlDockItemGrip
+  method GDL::Raw::Structs::GdlDockItemGrip
     is also<GdlDockItemGrip>
   { $!gdig }
 

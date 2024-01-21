@@ -39,7 +39,7 @@ class GDL::Switcher is GTK::Notebook {
     self.setGtkNotebook($to-parent);
   }
 
-  method GDL::Raw::Definitions::GdlSwitcher
+  method GDL::Raw::Structs::GdlSwitcher
     is also<GdlSwitcher>
   { $!gs }
 

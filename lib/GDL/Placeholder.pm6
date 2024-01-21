@@ -40,7 +40,7 @@ class GDL::Placeholder is GDL::Object {
     self.setGdlDockObject($to-parent);
   }
 
-  method GDL::Raw::Definitions::GdlDockPlaceholder
+  method GDL::Raw::Structs::GdlDockPlaceholder
     is also<GdlDockPlaceholder>
   { $!gdp }
 

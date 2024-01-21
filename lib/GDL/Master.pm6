@@ -40,7 +40,7 @@ class GDL::Master {
     self!setObject($to-parent);
   }
 
-  method GDL::Raw::Definitions::GdlDockMaster
+  method GDL::Raw::Structs::GdlDockMaster
     is also<GdlDockMaster>
   { $!gdm }
 

@@ -38,7 +38,7 @@ class GDL::Notebook is GDL::Item {
     self.setGdlDockItem($to-parent);
   }
 
-  method GDL::Raw::Definitions::GdlDockNotebook
+  method GDL::Raw::Structs::GdlDockNotebook
     is also<GdlDockNotebook>
   { $!gdn }
 

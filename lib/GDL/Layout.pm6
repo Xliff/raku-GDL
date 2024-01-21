@@ -37,7 +37,7 @@ class GDL::Layout {
     self!setObject($to-parent);
   }
 
-  method GDL::Raw::Definitions::GdlDockLayout
+  method GDL::Raw::Structs::GdlDockLayout
     is also<GdlDockLayout>
   { $!gdl }
 
