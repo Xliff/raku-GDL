@@ -173,7 +173,7 @@ class GDL::Object is GTK::Container {
   method dock (
     GdlDockObject() $requestor,
     Int()           $placement,
-    GValue()        $other_data
+    GValue()        $other_data = GValue
   ) {
     my GdlDockPlacement $p = $placement;
 
