@@ -1,5 +1,7 @@
 use v6.c;
 
+use Method::Also;
+
 use GLib::Raw::Traits;
 use GDL::Raw::Types;
 use GDL::Raw::Dock;
@@ -10,22 +12,68 @@ use GDL::Object;
 
 use GLib::Roles::Implementor;
 
-class GDL::Dock is GTK::Widget {
+our subset GdlDockAncestry is export of Mu
+  where GdlDock | GdlDockObjectAncestry;
+
+class GDL::Dock is GDL::Object {
   has GdlDock $!gd is implementor;
 
-  method new {
+  submethod BUILD ( :$dock ) {
+    self.setGdlDock($dock) if $dock
+  }
+
+  method setGdlDock (GdlDockAncestry $_) {
+    my $to-parent;
+
+    $!gd = do {
+      when GdlDock {
+        $to-parent = cast(GdlDockObject, $_);
+        $_;
+      }
+
+      default {
+        $to-parent = $_;
+        cast(GdlDock, $_);
+      }
+    }
+    self.setGdlDockObject($to-parent);
+  }
+
+  method GDL::Raw::Structs::GdlDock
+    is also<GdlDock>
+  { $!gd }
+
+  multi method new (
+     $dock where * ~~ GdlDockAncestry,
+    :$ref                              = True
+  ) {
+    return unless $dock;
+
+    my $o = self.bless( :$dock );
+    $o.ref if $ref;
+    $o;
+  }
+  multi method new {
     my $dock = gdl_dock_new();
 
     $dock ?? self.bless( :$dock ) !! Nil;
   }
 
-  method new_from (GdlDock() $original, Int() $floating) {
+  method new_from (GdlDock() $original, Int() $floating)
+    is also<new-from>
+  {
     my gboolean $f = $floating.so.Int;
 
-    gdl_dock_new_from($original, $f);
+    my $dock = gdl_dock_new_from($original, $f);
+
+    $dock ?? self.bless( :$dock ) !! Nil;
   }
 
-  method default-title is rw  is g-property {
+  method default-title
+    is rw
+    is g-property
+    is also<default_title>
+  {
     my $gv = GLib::Value.new( G_TYPE_STRING );
     Proxy.new(
       FETCH => sub ($) {
@@ -100,7 +148,11 @@ class GDL::Dock is GTK::Widget {
   }
 
   # Type: boolean
-  method skip-taskbar is rw  is g-property {
+  method skip-taskbar
+    is rw
+    is g-property
+    is also<skip_taskbar>
+  {
     my $gv = GLib::Value.new( G_TYPE_BOOLEAN );
     Proxy.new(
       FETCH => sub ($) {
@@ -129,7 +181,7 @@ class GDL::Dock is GTK::Widget {
     );
   }
 
-  method layout-changed {
+  method layout-changed is also<layout_changed> {
     self.connect($!gd, 'layout-changed');
   }
 
@@ -139,7 +191,9 @@ class GDL::Dock is GTK::Widget {
     Int()         $yy,
     Int()         $width,
     Int()         $height
-  ) {
+  )
+    is also<add-floating-item>
+  {
     my gint ($x, $y, $w, $h) = ($xx, $yy, $width, $height);
 
     gdl_dock_add_floating_item($!gd, $item, $x, $y, $w, $h);
@@ -148,13 +202,17 @@ class GDL::Dock is GTK::Widget {
   method add_item (
     GdlDockItem() $item,
     Int()         $placement
-  ) {
+  )
+    is also<add-item>
+  {
     my GdlDockPlacement $p = $placement;
 
     gdl_dock_add_item($!gd, $item, $p);
   }
 
-  method get_item_by_name (Str() $name, :$raw = False) {
+  method get_item_by_name (Str() $name, :$raw = False)
+    is also<get-item-by-name>
+  {
     propReturnObject(
       gdl_dock_get_item_by_name($!gd, $name),
       $raw,
@@ -162,7 +220,13 @@ class GDL::Dock is GTK::Widget {
     );
   }
 
-  method get_named_items ( :$raw = False, :gslist(:$glist) = False ) {
+  method get_named_items ( :$raw = False, :gslist(:$glist) = False )
+    is also<
+      get-named-items
+      named-items
+      named_items
+    >
+  {
     returnGList(
       gdl_dock_get_named_items($!gd),
       $raw,
@@ -171,11 +235,18 @@ class GDL::Dock is GTK::Widget {
     );
   }
 
-  method get_placeholder_by_name (Str() $name) {
+  method get_placeholder_by_name (Str() $name)
+    is also<get-placeholder-by-name>
+  {
     gdl_dock_get_placeholder_by_name($!gd, $name);
   }
 
-  method get_root ( :$raw = False ) {
+  method get_root ( :$raw = False )
+    is also<
+      get-root
+      root
+    >
+  {
     propReturnObject(
       gdl_dock_get_root($!gd),
       $raw,
@@ -189,17 +260,17 @@ class GDL::Dock is GTK::Widget {
     unstable_get_type( self.^name, &gdl_dock_get_type, $n, $t );
   }
 
-  method hide_preview {
+  method hide_preview is also<hide-preview> {
     gdl_dock_hide_preview($!gd);
   }
 
-  method set_skip_taskbar (Int() $skip) {
+  method set_skip_taskbar (Int() $skip) is also<set-skip-taskbar> {
     my gboolean $s = $skip.so.Int;
 
     gdl_dock_set_skip_taskbar($!gd, $s);
   }
 
-  method show_preview (GdkRectangle() $rect) {
+  method show_preview (GdkRectangle() $rect) is also<show-preview> {
     gdl_dock_show_preview($!gd, $rect);
   }
 
@@ -207,12 +278,20 @@ class GDL::Dock is GTK::Widget {
 
 role GDL::Roles::Dock::Object {
 
+  # cw: 5 years later and I still haven't had time to
+  #     fix Method::Also...
   method get_toplevel ( :$raw = False ) {
     propReturnObject(
       gdl_dock_object_get_toplevel(self.GdlDockObject),
       $raw,
       |GDL::Dock.getTypePair
     );
+  }
+  method get-toplevel ( :$raw = False ) {
+    self.get_toplevel( :$raw )
+  }
+  method toplevel ( :$raw = False ) {
+    self.get_toplevel( :$raw )
   }
 
 }
