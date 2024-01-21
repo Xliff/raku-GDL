@@ -7,6 +7,7 @@ use GDL::Raw::Types;
 use GDL::Raw::Bar;
 
 use GTK::Box;
+use GDL::Enums;
 
 use GTK::Roles::Orientable;
 
@@ -45,6 +46,9 @@ class GDL::Bar is GTK::Box {
     is also<GdlDockBar>
   { $!gdb }
 
+  proto method new (|)
+  { * }
+
   multi method new (
      $dock-bar where * ~~ GdlDockBarAncestry,
     :$ref                                     = True
@@ -67,7 +71,7 @@ class GDL::Bar is GTK::Box {
     is g-property
     is also<dockbar_style>
   {
-    my $gv = GLib::Value.new( GDL::Enuns::DockBarStyle.get_type );
+    my $gv = GLib::Value.new( GDL::Enums::DockBarStyle.get_type );
     Proxy.new(
       FETCH => sub ($) {
         self.prop_get('dockbar-style', $gv);
