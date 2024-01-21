@@ -40,9 +40,32 @@ class GDL::Item is GDL::Object {
     self.setGdlDockObject($to-parent);
   }
 
-  method GDL::Raw::Definitions::GdlDockItem
+  method GDL::Raw::Structs::GdlDockItem
     is also<GdlDockItem>
   { $!gdi }
+
+  method calcBehavior (%b) {
+    my $b = 0;
+
+    return 0 unless %b.elems;
+    return 0 if     %b<normal>;
+
+    $b +|= GDL_DOCK_ITEM_BEH_NEVER_FLOATING    if ( %b<floating>   // False );
+    $b +|= GDL_DOCK_ITEM_BEH_NEVER_VERTICAL    if ( %b<vertical>   // False );
+    $b +|= GDL_DOCK_ITEM_BEH_NEVER_HORIZONTAL  if ( %b<horizontal> // False );
+    $b +|= GDL_DOCK_ITEM_BEH_LOCKED            if ( %b<locked>     // False );
+
+    $b +|= GDL_DOCK_ITEM_BEH_CANT_DOCK_TOP     unless (%b<top>    // True);
+    $b +|= GDL_DOCK_ITEM_BEH_CANT_DOCK_BOTTOM  unless (%b<bottom> // True);
+    $b +|= GDL_DOCK_ITEM_BEH_CANT_DOCK_LEFT    unless (%b<left>   // True);
+    $b +|= GDL_DOCK_ITEM_BEH_CANT_DOCK_RIGHT   unless (%b<right>  // True);
+    $b +|= GDL_DOCK_ITEM_BEH_CANT_DOCK_CENTER  unless (%b<center> // True);
+    $b +|= GDL_DOCK_ITEM_BEH_CANT_CLOSE        unless (%b<close>  // True);
+    $b +|= GDL_DOCK_ITEM_BEH_CANT_ICONIFY      unless (%b<icon>   // True);
+    $b +|= GDL_DOCK_ITEM_BEH_NO_GRIP           unless (%b<grip>   // True);
+
+    $b;
+  }
 
   multi method new (
      $dock-item where * ~~ GdlDockItemAncestry,
@@ -54,8 +77,13 @@ class GDL::Item is GDL::Object {
     $o.ref if $ref;
     $o;
   }
-  multi method new (Str() $name, Str() $long_name, Int() $behavior) {
-    my GdlDockItemBehavior $b = $behavior;
+  multi method new (
+    Str() $name,
+    Str() $long_name,
+    Int() $behavior?,
+    *%behaviors
+  ) {
+    my GdlDockItemBehavior $b = $behavior // self.calcBehaivor(%behaviors);
 
     my $gdl-item = gdl_dock_item_new($name, $long_name, $b);
 
@@ -66,11 +94,12 @@ class GDL::Item is GDL::Object {
     Str()       $name,
     Str()       $long_name,
     GdkPixbuf() $pixbuf_icon,
-    Int()       $behavior
+    Int()       $behavior?,
+                *%behaviors
   )
     is also<new-with-pixbuf-icon>
   {
-    my GdlDockItemBehavior $b = $behavior;
+    my GdlDockItemBehavior $b = $behavior // self.calcBehaivor(%behaviors);
 
     my $gdl-item = gdl_dock_item_new_with_pixbuf_icon(
       $name,
@@ -86,11 +115,13 @@ class GDL::Item is GDL::Object {
     Str() $name,
     Str() $long_name,
     Str() $stock_id,
-    Int() $behavior
+    Int() $behavior?,
+
+    *%behaviors
   )
     is also<new-with-stock>
   {
-    my GdlDockItemBehavior $b = $behavior;
+    my GdlDockItemBehavior $b = $behavior // self.calcBehavior(%behaviors);
 
     my $gdl-item = gdl_dock_item_new_with_stock(
       $name,
@@ -254,13 +285,21 @@ class GDL::Item is GDL::Object {
     gdl_dock_item_bind($!gdi, $dock);
   }
 
+
+  method dock_floating
+    is also<
+      dock-floating
+      float
+    >
+  {
+    self.dock-to(GdlDockItem, GDL_DOCK_FLOATING);
+  }
+
   method dock_to (
     GdlDockItem() $target,
     Int()         $position,
-    Int()         $docking_param
-  )
-    is also<dock-to>
-  {
+    Int()         $docking_param = -1
+  ) {
     my GdlDockPlacement $p = $position;
     my gint             $d = $docking_param;
 
