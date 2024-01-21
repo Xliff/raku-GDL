@@ -15,7 +15,7 @@ use GDL::Roles::Signals::Object;
 our subset GdlDockObjectAncestry is export of Mu
   where GdlDockObject | GtkContainerAncestry;
 
-class GDL::Object {
+class GDL::Object is GTK::Container {
   also does GLib::Roles::Object;
   also does GDL::Roles::Signals::Object;
 
@@ -42,7 +42,7 @@ class GDL::Object {
     self.setGtkContainer($to-parent);
   }
 
-  method GDL::Raw::Definitions::GdlDockObject
+  method GDL::Raw::Structs::GdlDockObject
     is also<GdlDockObject>
   { $!gdo }
 
@@ -73,11 +73,15 @@ class GDL::Object {
 
   # Type: GdlDockMaster
   method master ( :$raw = False ) is rw  is g-property {
-    my $gv = GLib::Value.new( GDL::Master.get_type );
+    my $gv = GLib::Value.new( ::('GDL::Master').get_type );
     Proxy.new(
       FETCH => sub ($) {
         self.prop_get('master', $gv);
-        propReturnObject($gv.object, $raw, |GDL::Master.getTypePair)
+        propReturnObject(
+          $gv.object,
+          $raw,
+          |::('GDL::Master').getTypePair
+        )
       },
       STORE => -> $,  GdlDockMaster() $val is copy {
         $gv.object = $val;
@@ -192,7 +196,12 @@ class GDL::Object {
     gdl_dock_object_freeze($!gdo);
   }
 
-  method get_controller ( :$raw = False ) is also<get-controller> {
+  method get_controller ( :$raw = False )
+    is also<
+      get-controller
+      controller
+    >
+  {
     propReturnObject(
       gdl_dock_object_get_controller($!gdo),
       $raw,
@@ -200,7 +209,8 @@ class GDL::Object {
     );
   }
 
-  method get_long_name is also<get-long-name> {
+  method get_long_name is also<get-long-name>
+  {
     gdl_dock_object_get_long_name($!gdo);
   }
 
@@ -216,7 +226,14 @@ class GDL::Object {
     gdl_dock_object_get_name($!gdo);
   }
 
-  method get_parent_object ( :$raw = False ) is also<get-parent-object> {
+  method get_parent_object ( :$raw = False )
+    is also<
+      get-parent-object
+      parent_object
+      parent-object
+      parent
+    >
+  {
     propReturnObject(
       gdl_dock_object_get_parent_object($!gdo),
       $raw,
@@ -224,7 +241,12 @@ class GDL::Object {
     );
   }
 
-  method get_pixbuf ( :$raw = False ) is also<get-pixbuf> {
+  method get_pixbuf ( :$raw = False )
+    is also<
+      get-pixbuf
+      pixbuf
+    >
+  {
     propReturnObject(
       gdl_dock_object_get_pixbuf($!gdo),
       $raw,
