@@ -83,11 +83,11 @@ class GDL::Item is GDL::Object {
     Int() $behavior?,
     *%behaviors
   ) {
-    my GdlDockItemBehavior $b = $behavior // self.calcBehaivor(%behaviors);
+    my GdlDockItemBehavior $b = $behavior // self.calcBehavior(%behaviors);
 
-    my $gdl-item = gdl_dock_item_new($name, $long_name, $b);
+    my $dock-item = gdl_dock_item_new($name, $long_name, $b);
 
-    $gdl-item ?? self.bless( :$gdl-item ) !! Nil;
+    $dock-item ?? self.bless( :$dock-item ) !! Nil;
   }
 
   method new_with_pixbuf_icon (
@@ -101,14 +101,14 @@ class GDL::Item is GDL::Object {
   {
     my GdlDockItemBehavior $b = $behavior // self.calcBehaivor(%behaviors);
 
-    my $gdl-item = gdl_dock_item_new_with_pixbuf_icon(
+    my $dock-item = gdl_dock_item_new_with_pixbuf_icon(
       $name,
       $long_name,
       $pixbuf_icon,
       $b
     );
 
-    $gdl-item ?? self.bless( :$gdl-item ) !! Nil;
+    $dock-item ?? self.bless( :$dock-item ) !! Nil;
   }
 
   method new_with_stock (
@@ -123,14 +123,14 @@ class GDL::Item is GDL::Object {
   {
     my GdlDockItemBehavior $b = $behavior // self.calcBehavior(%behaviors);
 
-    my $gdl-item = gdl_dock_item_new_with_stock(
+    my $dock-item = gdl_dock_item_new_with_stock(
       $name,
       $long_name,
       $stock_id,
       $b
     );
 
-    $gdl-item ?? self.bless( :$gdl-item ) !! Nil;
+    $dock-item ?? self.bless( :$dock-item ) !! Nil;
   }
 
   method behavior ( :$enum = True ) is rw  is g-property {
@@ -299,7 +299,9 @@ class GDL::Item is GDL::Object {
     GdlDockItem() $target,
     Int()         $position,
     Int()         $docking_param = -1
-  ) {
+  )
+    is also<dock-to>
+  {
     my GdlDockPlacement $p = $position;
     my gint             $d = $docking_param;
 
