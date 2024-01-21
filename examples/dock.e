@@ -125,7 +125,7 @@ sub MAIN {
 
     my (@i, @items, $i);
     @i.push:
-      ($i = GDL::Item.new('item1', 'Item #1', GDL_DOCK_ITEM_BEH_LOCKED) );
+      ($i = GDL::Item.new('item1', 'Item #1', :locked) );
     $i.add( create-text-item );
     $dock.add-item($i, GDL_DOCK_TOP);
 
@@ -133,11 +133,9 @@ sub MAIN {
       $i = GDL::Item.new-with-stock(
         'item2',
         'Item #2: Select the switcher style',
-         'system-run',
-         GDL_DOCK_ITEM_BEH_LOCKED
+        'system-run'
       )
     );
-    $i.resize = False;
     $dock.add-item($i, GDL_DOCK_RIGHT);
 
     @i.push: (
